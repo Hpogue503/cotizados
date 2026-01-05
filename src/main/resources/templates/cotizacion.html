@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cotización</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+        .container {
+            width: 760px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,.1);
+        }
+        h2 {
+            margin-top: 0;
+        }
+        form {
+            margin-bottom: 15px;
+        }
+        select, input, button {
+            padding: 8px;
+            margin-top: 6px;
+        }
+        button {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1b5e20;
+        }
+        .btn-delete {
+            background: #d32f2f;
+        }
+        .btn-delete:hover {
+            background: #b71c1c;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background: #f0f0f0;
+        }
+        .total {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .actions {
+            margin-top: 20px;
+        }
+        .link {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            color: white;
+            margin-right: 10px;
+            display: inline-block;
+        }
+        .back {
+            background: #1976d2;
+        }
+        .pdf {
+            background: #d32f2f;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h2>Cotización</h2>
+
+    <!-- Agregar producto -->
+    <form action="/cotizar/agregar" method="post">
+        <select name="productoId" required>
+            <option th:each="p : ${productos}"
+                    th:value="${p.id}"
+                    th:text="${p.descripcion + ' - $' + #numbers.formatDecimal(p.precio,1,'COMMA',2,'POINT')}">
+            </option>
+        </select>
+
+        <input type="number" name="cantidad" min="1" value="1" required>
+        <button type="submit">Agregar</button>
+    </form>
+
+    <!-- Detalle -->
+    <table>
+        <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Subtotal</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="i : ${carrito}">
+            <td th:text="${i.descripcion}"></td>
+            <td>
+                <form action="/cotizar/actualizar" method="post" style="display:flex; gap:4px;">
+                    <input type="hidden" name="productoId" th:value="${i.productoId}">
+                    <input type="number"
+                           name="cantidad"
+                           min="0"
+                           th:value="${i.cantidad}"
+                           style="width:60px;">
+                    <button type="submit">✔</button>
+                </form>
+            </td>            <td>
+                $<span th:text="${#numbers.formatDecimal(i.precioUnitario,1,'COMMA',2,'POINT')}"></span>
+            </td>
+            <td>
+                $<span th:text="${#numbers.formatDecimal(i.subtotal,1,'COMMA',2,'POINT')}"></span>
+            </td>
+            <td>
+                <form action="/cotizar/eliminar" method="post" style="margin:0;">
+                    <input type="hidden" name="productoId" th:value="${i.productoId}">
+                    <button type="submit" class="btn-delete">Eliminar</button>
+                </form>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Total -->
+    <div class="total">
+        Total: $
+        <span th:text="${#numbers.formatDecimal(total,1,'COMMA',2,'POINT')}"></span>
+    </div>
+
+    <!-- Acciones -->
+    <div class="actions">
+        <a href="/" class="link back">← Productos</a>
+        <form action="/cotizar/limpiar" method="post" style="display:inline;">
+            <button type="submit" style="background:#757575;">
+                Limpiar Cotización
+            </button>
+        </form>
+        <a href="/cotizar/pdf" class="link pdf">Generar PDF</a>
+    </div>
+
+</div>
+</body>
+</html>

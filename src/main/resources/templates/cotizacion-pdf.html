@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cotización</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            width: 100%;
+            padding: 30px;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .header table {
+            width: 100%;
+            border: none;
+        }
+
+        .logo {
+            width: 150px;
+            height: 60px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 11px;
+            vertical-align: middle;
+        }
+
+        .title {
+            text-align: right;
+        }
+
+        .title h1 {
+            margin: 0;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        .title p {
+            margin: 3px 0;
+        }
+
+        /* ===== Section titles ===== */
+        .section-title {
+            margin-top: 20px;
+            margin-bottom: 6px;
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+            padding-bottom: 4px;
+        }
+
+        /* ===== Table ===== */
+        table.detail {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table.detail th,
+        table.detail td {
+            border: 1px solid #000;
+            padding: 6px;
+        }
+
+        table.detail th {
+            background: #eee;
+            font-weight: bold;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        /* ===== Totals ===== */
+        .totals {
+            width: 250px;
+            margin-left: auto;
+            margin-top: 15px;
+            border-collapse: collapse;
+        }
+
+        .totals td {
+            padding: 6px;
+        }
+
+        .totals .label {
+            border-top: 1px solid #000;
+        }
+
+        .totals .value {
+            border-top: 1px solid #000;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            margin-top: 30px;
+            font-size: 11px;
+            border-top: 1px solid #000;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
+        <table>
+            <tr>
+                <td class="logo">
+                    LOGO
+                </td>
+                <td class="title">
+                    <h1>COTIZACIÓN</h1>
+                    <p>No. 0001</p>
+                    <p>Fecha: <span th:text="${fecha}"></span></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- CLIENT -->
+    <div class="section-title">Datos del cliente</div>
+    <p>Cliente: <strong>Consumidor Final</strong></p>
+
+    <!-- DETAIL -->
+    <div class="section-title">Detalle de productos</div>
+
+    <table class="detail">
+        <thead>
+        <tr>
+            <th>Descripción</th>
+            <th class="right">Cantidad</th>
+            <th class="right">Precio Unit.</th>
+            <th class="right">Subtotal</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="i : ${carrito}">
+            <td th:text="${i.descripcion}"></td>
+            <td class="right" th:text="${i.cantidad}"></td>
+            <td class="right">
+                $<span th:text="${#numbers.formatDecimal(i.precioUnitario,1,'COMMA',2,'POINT')}"></span>
+            </td>
+            <td class="right">
+                $<span th:text="${#numbers.formatDecimal(i.subtotal,1,'COMMA',2,'POINT')}"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- TOTAL -->
+    <table class="totals">
+        <tr>
+            <td class="label">TOTAL</td>
+            <td class="value">
+                $<span th:text="${#numbers.formatDecimal(total,1,'COMMA',2,'POINT')}"></span>
+            </td>
+        </tr>
+    </table>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>Esta cotización es válida por 15 días.</p>
+        <p>Gracias por su preferencia.</p>
+    </div>
+
+</div>
+
+</body>
+</html>
